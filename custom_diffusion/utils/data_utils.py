@@ -1,158 +1,74 @@
-def download_video(
-    video_url: str ="https://www.youtube.com/watch?v=8QRG4vzbdE0",
-    output_path: str = 'output_videos',
-    quality: str = '720p',
-    filename: str = 'downloaded_video.mp4'
-    ):
+def image_grid(imgs, rows, cols):
     """
-    This function downloads a video and corresponding audio from YouTube and saves it in the designated output folder.
+    This function takes a list of images and creates a grid of images from them.
 
     Args:
-    video_url (str): URL of the YouTube video to be downloaded.
-    output_path (str): Directory path where the downloaded video will be saved.
-    quality (str): Desired quality of the video to be downloaded. It can be '144p', '240p', '360p', '480p', '720p', '1080p', '1440p' (for 2K), or '2160p' (for 4K).
-    filename (str): Desired filename of the downloaded video.
+    imgs (list): List of images to be used in the grid.
+    rows (int): Number of rows in the grid.
 
     Returns:
-    None
+    grid (Image): The grid of images.
     """
-    from pytube import YouTube
-    import os
+    from PIL import Image
 
-    # Create a YouTube object
-    yt = YouTube(video_url)
+    w, h = imgs[0].size
+    grid = Image.new("RGB", size=(cols * w, rows * h))
+    grid_w, grid_h = grid.size
 
-    # Find the stream with the desired quality that also contains audio
-    video_stream = yt.streams.filter(progressive=True, file_extension='mp4', res=quality).first()
-    
-    if video_stream is not None:
-        # Download the stream
-        video_stream.download(output_path, filename=filename)
-        print('Video downloaded successfully!')
-    else:
-        print(f'No video stream found for {quality} quality.')
-    
-    save_path = os.path.join(output_path, filename)
-    return save_path
+    for i, img in enumerate(imgs):
+        grid.paste(img, box=(i % cols * w, i // cols * h))
+    return grid
 
 
-def video_to_frames(video_path, output_path, frame_rate=1):
+def load_images_from_folder(folder):
     """
-    This function takes a video file, separates it into frames, 
-    and saves them in the designated output folder.
+    Loads all .jpg and .png images in a specified folder and returns them as a list of PIL.Image objects.
 
-    Args:
-    video_path (str): Path to the video file to be dissected.
-    output_path (str): Directory path where the dissected frames will be saved.
-    frame_rate (int): Determines the frequency of frames to be saved, every 'frame_rate' frame will be saved.
+    Parameters:
+    folder (str): The path to the folder containing the images.
 
     Returns:
-    None
+    list: A list of PIL.Image objects.
+
     """
-    import cv2
     import os
-    
-    
-    # Create VideoCapture object
-    vidcap = cv2.VideoCapture(video_path)
 
-    # Check if output directory exists, if not, create it.
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
+    from PIL import Image
 
-    count = 0
-    success = True
-    frame_id = 0
-
-    while success:
-        # Read frame
-        success, image = vidcap.read()
-
-        if success:
-            # Only save frame if it is the right id (based on frame_rate)
-            if frame_id % frame_rate == 0:
-                # Save frame to specified output path with zero-padded file name
-                cv2.imwrite(os.path.join(output_path, f'{str(count).zfill(5)}.jpg'), image)  
-                count += 1
-
-            frame_id += 1
-
-    print('Video frames saved successfully!')
-
-    return output_path
+    images = []
+    for filename in os.listdir(folder):
+        if filename.endswith(".jpg") or filename.endswith(".png"):
+            img = Image.open(os.path.join(folder, filename))
+            if img is not None:
+                images.append(img)
+    return images
 
 
-
-def trim_video(video_path: str, output_path: str, start_time: int, end_time: int):
+def center_crop_and_resize(image, crop_size, height, width):
     """
-    This function trims a video clip from the given start time to the end time.
+    Crops the center of an image based on the input crop size and then resizes the image.
 
-    Args:
-    video_path (str): Path to the input video file.
-    output_path (str): Path to save the output trimmed video file.
-    start_time (int): The start time of the clip in seconds.
-    end_time (int): The end time of the clip in seconds.
+    Parameters:
+    image_path (str): The path to the image to be processed.
+    crop_size (int): The size of the square crop. The function will crop a square with this side length from the center of the image.
+    height (int): The height of the resized image.
+    width (int): The width of the resized image.
 
     Returns:
-    None
+    PIL.Image: The cropped and resized image.
+
     """
-    from moviepy.editor import VideoFileClip
-    import os
+    # Calculate the center and the crop box coordinates
+    width, height = image.size
+    left = (width - crop_size) / 2
+    upper = (height - crop_size) / 2
+    right = (width + crop_size) / 2
+    lower = (height + crop_size) / 2
 
-    # Load the video
-    clip = VideoFileClip(video_path)
+    # Crop the image using the calculated coordinates
+    cropped_img = image.crop((left, upper, right, lower))
 
-    # Trim the video
-    trimmed_clip = clip.subclip(start_time, end_time)
+    # Resize the cropped image to the specified size
+    resized_img = cropped_img.resize((height, width))
 
-    # Write the result to a file (without processing audio)
-    trimmed_clip.write_videofile(output_path, audio=True)
-
-    print('Video trimmed successfully!')
-    
-    return output_path
-
-def frames_to_video(folder_path, output_folder, output_video_name="output.avi", duration=10):
-    """
-    This function takes a folder with image files, orders them, and creates a video file from them.
-    The video is then saved in the designated output folder.
-
-    Args:
-    folder_path (str): Path to the folder with image files.
-    output_folder (str): Directory path where the video will be saved.
-    output_video_name (str): The name of the output video file.
-    duration (int): The desired duration of the output video in seconds.
-
-    Returns:
-    None
-    """
-    import cv2
-    import os
-    import glob
-
-    # Get the list of images
-    img_array = []
-    for filename in sorted(glob.glob(os.path.join(folder_path, '*.jpg'))):
-        img = cv2.imread(filename)
-        height, width, layers = img.shape
-        size = (width, height)
-        img_array.append(img)
-    
-    # Calculate fps based on the desired duration
-    fps = len(img_array) / duration
-
-    # Check if output directory exists, if not, create it.
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
-
-    # Create a VideoWriter object
-    out = cv2.VideoWriter(os.path.join(output_folder, output_video_name), cv2.VideoWriter_fourcc(*'DIVX'), fps, size)
-    
-    for i in range(len(img_array)):
-        out.write(img_array[i])
-    
-    out.release()
-    
-    print('Video created successfully!')
-
-    return output_folder
+    return resized_img
