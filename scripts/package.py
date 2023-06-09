@@ -1,7 +1,9 @@
 import subprocess
 
+
 def run_command(command):
     subprocess.run(command, shell=True, check=True)
+
 
 def main():
 
@@ -10,6 +12,7 @@ def main():
 
     run_command(sdist_command)
     run_command(twine_command)
+
 
 if __name__ == "__main__":
     main()

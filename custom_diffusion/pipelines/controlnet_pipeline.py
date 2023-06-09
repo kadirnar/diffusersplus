@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 import torch
 from diffusers import ControlNetModel, StableDiffusionControlNetPipeline
@@ -108,22 +108,22 @@ class StableDiffusionControlNetGenerator:
 
     def generate_image(
         self,
-        stable_model_path,
-        controlnet_model_path,
-        scheduler_name,
-        image_path,
-        prompts,
-        negative_prompt,
-        height,
-        width,
-        guess_mode,
-        num_images_per_prompt,
-        num_inference_steps,
-        guidance_scale,
-        controlnet_conditioning_scale,
-        generator_seed,
-        preprocess_type,
-        resize_type,
+        stable_model_path: str = "runwayml/stable-diffusion-v1-5",
+        controlnet_model_path: str = "lllyasviel/control_v11p_sd15_canny",
+        scheduler_name: str = "DDIM",
+        image_path: str = "test.png",
+        prompts: List[str] = ["A photo of a cat."],
+        negative_prompt: List[str] = ["bad"],
+        height: int = 512,
+        width: int = 512,
+        guess_mode: bool = False,
+        num_images_per_prompt: int = 1,
+        num_inference_steps: int = 20,
+        guidance_scale: int = 7.0,
+        controlnet_conditioning_scale: int = 1.0,
+        generator_seed: int = 0,
+        preprocess_type: str = "Canny",
+        resize_type: str = "center_crop_and_resize",
     ):
         """
         This function generates an image based on the given parameters.
