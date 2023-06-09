@@ -8,6 +8,12 @@ from custom_diffusion.utils.data_utils import center_crop_and_resize
 from custom_diffusion.utils.scheduler_utils import get_scheduler
 
 
+from typing import List, Optional
+
+import torch
+from diffusers import ControlNetModel, StableDiffusionControlNetPipeline
+
+
 class StableDiffusionControlNetGenerator:
     """
     A class to handle image generation using stable diffusion and control net models.
@@ -85,7 +91,7 @@ class StableDiffusionControlNetGenerator:
         Returns:
         Image: The resized and loaded PIL Image.
         """
-        image = image.open(image_path)
+        image = Image.open(image_path)
 
         if resize_type == "center_crop_and_resize":
             image = center_crop_and_resize(image, crop_size=crop_size, height=height, width=width)
@@ -124,6 +130,7 @@ class StableDiffusionControlNetGenerator:
         generator_seed: int = 0,
         preprocess_type: str = "Canny",
         resize_type: str = "center_crop_and_resize",
+        crop_size: int = 512
     ):
         """
         This function generates an image based on the given parameters.
@@ -149,8 +156,8 @@ class StableDiffusionControlNetGenerator:
         output: The generated image.
         """
         read_image = self.load_and_resize_image(
-            image_path=image_path, resize_type=resize_type, height=height, width=width
-        )
+            image_path=image_path, resize_type=resize_type, height=height, width=width, crop_size=crop_size)
+        
 
         control_image = preprocces_dicts[preprocess_type](read_image)
 
@@ -167,7 +174,7 @@ class StableDiffusionControlNetGenerator:
             height=height,
             width=width,
             guess_mode=guess_mode,
-            control_image=control_image,
+            image=control_image,
             negative_prompt=negative_prompt,
             num_images_per_prompt=num_images_per_prompt,
             num_inference_steps=num_inference_steps,

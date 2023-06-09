@@ -32,7 +32,7 @@ SCHEDULER_MAPPING = {
 def get_scheduler(pipe, scheduler_name):
     if scheduler_name in SCHEDULER_MAPPING:
         SchedulerClass = SCHEDULER_MAPPING[scheduler_name]
-        pipe.scheduler = SchedulerClass.from_config(pipe.scheduler_name.config)
+        pipe.scheduler = SchedulerClass.from_config(pipe.scheduler.config)
     else:
         raise ValueError(f"Invalid scheduler name {scheduler_name}")
 
