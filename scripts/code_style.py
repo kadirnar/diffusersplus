@@ -1,6 +1,3 @@
-# run_commands.py
-
-import os
 import subprocess
 
 commands = [
