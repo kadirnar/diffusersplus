@@ -12,7 +12,7 @@ from typing import List, Optional
 
 import torch
 from diffusers import ControlNetModel, StableDiffusionControlNetPipeline
-
+from PIL import Image
 
 class StableDiffusionControlNetGenerator:
     """
@@ -24,7 +24,7 @@ class StableDiffusionControlNetGenerator:
         self.pipe = None
         self.model_cache = {}
 
-    def _load_controlnet_model(self, controlnet_model_path):
+    def _load_controlnet_model(self, controlnet_model_path: str ="lllyasviel/control_v11p_sd15_canny"):
         """
         This function loads the controlnet model.
 
@@ -34,7 +34,7 @@ class StableDiffusionControlNetGenerator:
         """
         self.controlnet = ControlNetModel.from_pretrained(controlnet_model_path, torch_dtype=torch.float16)
 
-    def _load_stable_diffusion_pipeline(self, stable_model_path):
+    def _load_stable_diffusion_pipeline(self, stable_model_path: str = "runwayml/stable-diffusion-v1-5"):
         """
         This function loads the stable diffusion pipeline.
 
@@ -49,7 +49,12 @@ class StableDiffusionControlNetGenerator:
             torch_dtype=torch.float16,
         )
 
-    def load_model(self, stable_model_path, controlnet_model_path, scheduler_name):
+    def load_model(
+        self, 
+        stable_model_path: str = "runwayml/stable-diffusion-v1-5",
+        controlnet_model_path: str = "lllyasviel/control_v11p_sd15_canny",
+        scheduler_name: str = "DDIM"
+    ):
         """
         Load the models and setup the scheduler if not cached.
 
@@ -76,7 +81,12 @@ class StableDiffusionControlNetGenerator:
         return self.model_cache[model_key]
 
     def load_and_resize_image(
-        self, image_path: str, resize_type: str, crop_size: Optional[int], height: Optional[int], width: Optional[int]
+        self, 
+        image_path: str = "test.png",
+        resize_type: str = "center_crop_and_resize",
+        crop_size: Optional[int] = 512, 
+        height: Optional[int] = 512,
+        width: Optional[int] = 512
     ):
         """
         This function loads and resizes the image.
@@ -104,7 +114,7 @@ class StableDiffusionControlNetGenerator:
 
         return image
 
-    def _setup_generator(self, generator_seed):
+    def _setup_generator(self, generator_seed: int = 0):
         if generator_seed == 0:
             random_seed = torch.randint(0, 1000000, (1,))
             generator = torch.manual_seed(random_seed)
@@ -118,7 +128,7 @@ class StableDiffusionControlNetGenerator:
         controlnet_model_path: str = "lllyasviel/control_v11p_sd15_canny",
         scheduler_name: str = "DDIM",
         image_path: str = "test.png",
-        prompts: List[str] = ["A photo of a cat."],
+        prompt: List[str] = ["A photo of a cat."],
         negative_prompt: List[str] = ["bad"],
         height: int = 512,
         width: int = 512,
@@ -140,7 +150,7 @@ class StableDiffusionControlNetGenerator:
         controlnet_model_path (str): Path to the controlnet model.
         scheduler_name (str): Name of the scheduler.
         image_path (dict): Path of the images.
-        prompts (dict): The prompts for image generation.
+        prompt (dict): The prompt for image generation.
         negative_prompt (str): The negative prompt for image generation.
         height (int): The height of the image to generate.
         width (int): The width of the image to generate.
@@ -170,7 +180,7 @@ class StableDiffusionControlNetGenerator:
         generator = self._setup_generator(generator_seed)
 
         output = pipe(
-            prompt=prompts,
+            prompt=prompt,
             height=height,
             width=width,
             guess_mode=guess_mode,
