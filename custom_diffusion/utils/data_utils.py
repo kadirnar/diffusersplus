@@ -38,7 +38,7 @@ def load_images_from_folder(folder):
     images = []
     for filename in os.listdir(folder):
         if filename.endswith(".jpg") or filename.endswith(".png"):
-            img = Image.open(os.path.join(folder, filename))
+            img = os.path.join(folder, filename)
             if img is not None:
                 images.append(img)
     return images
