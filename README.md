@@ -17,7 +17,7 @@ pip install custom_diffusion
 
 ### Usage
 ```python
-from custom_diffusion.pipelines import StableDiffusionControlNetGenerator
+from custom_diffusion.pipelines.controlnet_pipeline import StableDiffusionControlNetGenerator
 
 
 generator = StableDiffusionControlNetGenerator()

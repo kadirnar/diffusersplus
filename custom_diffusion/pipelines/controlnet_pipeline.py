@@ -2,17 +2,12 @@ from typing import List, Optional
 
 import torch
 from diffusers import ControlNetModel, StableDiffusionControlNetPipeline
+from PIL import Image
 
 from custom_diffusion.preprocces import preprocces_dicts
 from custom_diffusion.utils.data_utils import center_crop_and_resize
 from custom_diffusion.utils.scheduler_utils import get_scheduler
 
-
-from typing import List, Optional
-
-import torch
-from diffusers import ControlNetModel, StableDiffusionControlNetPipeline
-from PIL import Image
 
 class StableDiffusionControlNetGenerator:
     """
@@ -24,7 +19,7 @@ class StableDiffusionControlNetGenerator:
         self.pipe = None
         self.model_cache = {}
 
-    def _load_controlnet_model(self, controlnet_model_path: str ="lllyasviel/control_v11p_sd15_canny"):
+    def _load_controlnet_model(self, controlnet_model_path: str = "lllyasviel/control_v11p_sd15_canny"):
         """
         This function loads the controlnet model.
 
@@ -50,10 +45,10 @@ class StableDiffusionControlNetGenerator:
         )
 
     def load_model(
-        self, 
+        self,
         stable_model_path: str = "runwayml/stable-diffusion-v1-5",
         controlnet_model_path: str = "lllyasviel/control_v11p_sd15_canny",
-        scheduler_name: str = "DDIM"
+        scheduler_name: str = "DDIM",
     ):
         """
         Load the models and setup the scheduler if not cached.
@@ -81,12 +76,12 @@ class StableDiffusionControlNetGenerator:
         return self.model_cache[model_key]
 
     def load_and_resize_image(
-        self, 
+        self,
         image_path: str = "test.png",
         resize_type: str = "center_crop_and_resize",
-        crop_size: Optional[int] = 512, 
+        crop_size: Optional[int] = 512,
         height: Optional[int] = 512,
-        width: Optional[int] = 512
+        width: Optional[int] = 512,
     ):
         """
         This function loads and resizes the image.
@@ -140,7 +135,7 @@ class StableDiffusionControlNetGenerator:
         generator_seed: int = 0,
         preprocess_type: str = "Canny",
         resize_type: str = "center_crop_and_resize",
-        crop_size: int = 512
+        crop_size: int = 512,
     ):
         """
         This function generates an image based on the given parameters.
@@ -166,8 +161,8 @@ class StableDiffusionControlNetGenerator:
         output: The generated image.
         """
         read_image = self.load_and_resize_image(
-            image_path=image_path, resize_type=resize_type, height=height, width=width, crop_size=crop_size)
-        
+            image_path=image_path, resize_type=resize_type, height=height, width=width, crop_size=crop_size
+        )
 
         control_image = preprocces_dicts[preprocess_type](read_image)
 

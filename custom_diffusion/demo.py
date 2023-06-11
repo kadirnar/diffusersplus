@@ -1,4 +1,5 @@
-from custom_diffusion.pipelines import StableDiffusionControlNetGenerator
+from custom_diffusion.pipelines.controlnet_pipeline import StableDiffusionControlNetGenerator
+
 
 def main(
     stable_model_path: str = "runwayml/stable-diffusion-v1-5",
@@ -18,7 +19,7 @@ def main(
     preprocess_type: str = "Canny",
     resize_type: str = "center_crop_and_resize",
     crop_size: int = 512,
-    ):
+):
     generator = StableDiffusionControlNetGenerator()
 
     generated_image = generator.generate_image(

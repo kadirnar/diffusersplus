@@ -34,7 +34,7 @@ def video_to_frames(video_path, output_path, frame_rate=1):
             # Only save frame if it is the right id (based on frame_rate)
             if frame_id % frame_rate == 0:
                 # Save frame to specified output path with zero-padded file name
-                cv2.imwrite(os.path.join(output_path, f"{str(count).zfill(5)}.jpg"), image)
+                cv2.imwrite(os.path.join(output_path, f"{str(count).zfill(5)}.png"), image)
                 count += 1
 
             frame_id += 1
@@ -44,13 +44,13 @@ def video_to_frames(video_path, output_path, frame_rate=1):
     return output_path
 
 
-def trim_video(video_path: str, output_path: str, start_time: int, end_time: int):
+def trim_video(video_path: str, output_name: str, start_time: int, end_time: int):
     """
     This function trims a video clip from the given start time to the end time.
 
     Args:
     video_path (str): Path to the input video file.
-    output_path (str): Path to save the output trimmed video file.
+    output_name (str): Path to save the output trimmed video file.
     start_time (int): The start time of the clip in seconds.
     end_time (int): The end time of the clip in seconds.
 
@@ -66,11 +66,11 @@ def trim_video(video_path: str, output_path: str, start_time: int, end_time: int
     trimmed_clip = clip.subclip(start_time, end_time)
 
     # Write the result to a file (without processing audio)
-    trimmed_clip.write_videofile(output_path, audio=True)
+    trimmed_clip.write_videofile(output_name, audio=True)
 
     print("Video trimmed successfully!")
 
-    return output_path
+    return output_name
 
 
 def frames_to_video(folder_path, output_folder, output_video_name="output.avi", duration=10):
@@ -94,7 +94,7 @@ def frames_to_video(folder_path, output_folder, output_video_name="output.avi", 
 
     # Get the list of images
     img_array = []
-    for filename in sorted(glob.glob(os.path.join(folder_path, "*.jpg"))):
+    for filename in sorted(glob.glob(os.path.join(folder_path, "*.png"))):
         img = cv2.imread(filename)
         height, width, layers = img.shape
         size = (width, height)

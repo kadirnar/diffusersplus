@@ -6,7 +6,6 @@ def run_command(command):
 
 
 def main():
-
     sdist_command = "python setup.py sdist"
     twine_command = "twine upload dist/*"
 

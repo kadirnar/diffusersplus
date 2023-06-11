@@ -1,5 +1,5 @@
-def download_video(
-    video_url: str = "https://www.youtube.com/watch?v=8QRG4vzbdE0",
+def download_from_youtube_url(
+    youtube_video_url: str = "https://www.youtube.com/watch?v=8QRG4vzbdE0",
     output_path: str = "output_videos",
     quality: str = "720p",
     filename: str = "downloaded_video.mp4",
@@ -21,7 +21,7 @@ def download_video(
     from pytube import YouTube
 
     # Create a YouTube object
-    yt = YouTube(video_url)
+    yt = YouTube(youtube_video_url)
 
     # Find the stream with the desired quality that also contains audio
     video_stream = yt.streams.filter(progressive=True, file_extension="mp4", res=quality).first()
@@ -35,3 +35,18 @@ def download_video(
 
     save_path = os.path.join(output_path, filename)
     return save_path
+
+
+def download_from_url(from_url: str, to_path: str):
+    # https://github.com/obss/sahi/blob/main/sahi/utils/file.py
+    import os
+    import urllib.request
+    from pathlib import Path
+
+    Path(to_path).parent.mkdir(parents=True, exist_ok=True)
+
+    if not os.path.exists(to_path):
+        urllib.request.urlretrieve(
+            from_url,
+            to_path,
+        )
