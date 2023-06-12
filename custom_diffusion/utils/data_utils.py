@@ -13,14 +13,13 @@ def image_grid(imgs, rows, cols):
 
     w, h = imgs[0].size
     grid = Image.new("RGB", size=(cols * w, rows * h))
-    grid_w, grid_h = grid.size
 
     for i, img in enumerate(imgs):
         grid.paste(img, box=(i % cols * w, i // cols * h))
     return grid
 
 
-def load_images_from_folder(folder):
+def load_images_from_folder(folder, pil_image=True):
     """
     Loads all .jpg and .png images in a specified folder and returns them as a list of PIL.Image objects.
 
@@ -38,7 +37,10 @@ def load_images_from_folder(folder):
     images = []
     for filename in os.listdir(folder):
         if filename.endswith(".jpg") or filename.endswith(".png"):
-            img = os.path.join(folder, filename)
+            if pil_image:
+                img = Image.open(os.path.join(folder, filename))
+            else:
+                img = os.path.join(folder, filename)
             if img is not None:
                 images.append(img)
     return images

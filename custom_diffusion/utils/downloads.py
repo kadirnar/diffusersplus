@@ -50,3 +50,5 @@ def download_from_url(from_url: str, to_path: str):
             from_url,
             to_path,
         )
+
+    return to_path
