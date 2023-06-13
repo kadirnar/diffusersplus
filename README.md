@@ -18,19 +18,24 @@ pip install custom_diffusion
 ### Usage
 ```python
 
+# Importing the required libraries
+
+from custom_diffusion.utils.data_utils import load_images_from_folder
+from custom_diffusion import StableDiffusionControlNetGenerator
+from custom_diffusion.utils.video_utils import convert_images_to_video
+from custom_diffusion.demo import video_pipeline
+
+# Creating a video from a video file
 frames_path = video_pipeline(
-    video_url="https://huggingface.co/spaces/kadirnar/torchyolo/resolve/main/testv2.mp4",
-    youtube=False,
-    output_path="output",
-    filename="test.mp4",
-    quality="720p",
+    video_path="test.mp4",
+    output_path="output.mp4",
     start_time=0,
-    end_time=2,
+    end_time=5,
     frame_rate=1,
 )
 
+# Creating a video from a folder of images
 images_list = load_images_from_folder(frames_path)
-image_grid(images_list, rows=5, cols=5)
 
 prompt = "a anime boy"
 negative_prompt = "bad"
@@ -38,6 +43,7 @@ negative_prompt = "bad"
 list_prompt = [prompt] * len(images_list)
 list_negative_prompt = [negative_prompt] * len(images_list)
 
+# Generating images from a list of images
 generator = StableDiffusionControlNetGenerator()
 
 generated_image_list = generator.generate_image(
@@ -60,11 +66,10 @@ generated_image_list = generator.generate_image(
     crop_size=512,
 )
 
-frame2video = frames_to_video(
-    folder_path=generated_image_list,
-    output_folder="output",
-    output_video_name="frame2video.mp4",
-    duration=5,
+# Converting the generated images to a video
+frame2video = convert_images_to_video(
+    image_list=generated_image_list,
+    output_file="output.mp4",
+    frame_rate=5,
 )
-
 ```

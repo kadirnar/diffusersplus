@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 import torch
-from diffusers import ControlNetModel, StableDiffusionControlNetPipeline
+from diffusers import ControlNetModel, StableDiffusionControlNetImg2ImgPipeline
 from PIL import Image
 
 from custom_diffusion.preprocces import preprocces_dicts
@@ -9,7 +9,7 @@ from custom_diffusion.utils.data_utils import center_crop_and_resize
 from custom_diffusion.utils.scheduler_utils import get_scheduler
 
 
-class StableDiffusionControlNetGenerator:
+class StableDiffusionControlNetImg2ImgGenerator:
     """
     A class to handle image generation using stable diffusion and control net models.
     """
@@ -37,7 +37,7 @@ class StableDiffusionControlNetGenerator:
         stable_model_path (str): Path to the stable diffusion pipeline.
 
         """
-        self.pipe = StableDiffusionControlNetPipeline.from_pretrained(
+        self.pipe = StableDiffusionControlNetImg2ImgPipeline.from_pretrained(
             pretrained_model_name_or_path=stable_model_path,
             controlnet=self.controlnet,
             safety_checker=None,
@@ -122,7 +122,7 @@ class StableDiffusionControlNetGenerator:
         stable_model_path: str = "runwayml/stable-diffusion-v1-5",
         controlnet_model_path: str = "lllyasviel/control_v11p_sd15_canny",
         scheduler_name: str = "DDIM",
-        image_list: List[str] = ["test.png"],
+        images_list: List[str] = ["test.png"],
         prompt: List[str] = ["A photo of a cat."],
         negative_prompt: List[str] = ["bad"],
         height: int = 512,
@@ -132,6 +132,7 @@ class StableDiffusionControlNetGenerator:
         num_inference_steps: int = 20,
         guidance_scale: int = 7.0,
         controlnet_conditioning_scale: int = 1.0,
+        strength: float = 0.5,
         generator_seed: int = 0,
         preprocess_type: str = "Canny",
         resize_type: str = "center_crop_and_resize",
@@ -160,9 +161,8 @@ class StableDiffusionControlNetGenerator:
         Returns:
         output: The generated image.
         """
-
         control_image_list = []
-        for image_path in image_list:
+        for image_path in images_list:
             read_image = self.load_and_resize_image(
                 image_path=image_path, resize_type=resize_type, height=height, width=width, crop_size=crop_size
             )
@@ -182,7 +182,9 @@ class StableDiffusionControlNetGenerator:
             height=height,
             width=width,
             guess_mode=guess_mode,
-            image=control_image_list,
+            control_image=control_image_list,
+            image=read_image,
+            strength=strength,
             negative_prompt=negative_prompt,
             num_images_per_prompt=num_images_per_prompt,
             num_inference_steps=num_inference_steps,
