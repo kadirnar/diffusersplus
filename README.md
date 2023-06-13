@@ -1,7 +1,7 @@
 <div align="center">
-<h2>
-Custom Diffusion: Creating Video from Frame Using Multiple Diffusion
-</h2>
+<h1>
+    Custom Diffusion: Creating Video from Frame Using Diffusion
+</h1>
 <div>
     <a href="https://pepy.tech/project/custom_diffusion"><img src="https://pepy.tech/badge/custom_diffusion" alt="downloads"></a>
     <a href="https://badge.fury.io/py/custom_diffusion"><img src="https://badge.fury.io/py/custom_diffusion.svg" alt="pypi version"></a>
