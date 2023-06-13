@@ -184,7 +184,7 @@ class StableDiffusionControlNetImg2ImgGenerator:
             guess_mode=guess_mode,
             control_image=control_image_list,
             image=read_image,
-            strength=strength
+            strength=strength,
             negative_prompt=negative_prompt,
             num_images_per_prompt=num_images_per_prompt,
             num_inference_steps=num_inference_steps,

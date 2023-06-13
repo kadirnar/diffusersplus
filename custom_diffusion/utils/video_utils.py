@@ -1,3 +1,6 @@
+from typing import List
+
+
 def video_to_frames(video_path, output_path, frame_rate=1):
     """
     This function takes a video file, separates it into frames,
@@ -44,13 +47,13 @@ def video_to_frames(video_path, output_path, frame_rate=1):
     return output_path
 
 
-def trim_video(video_path: str, output_name: str, start_time: int, end_time: int):
+def trim_video(video_path: str, output_path: str, start_time: int, end_time: int):
     """
     This function trims a video clip from the given start time to the end time.
 
     Args:
     video_path (str): Path to the input video file.
-    output_name (str): Path to save the output trimmed video file.
+    output_path (str): Path to save the output trimmed video file.
     start_time (int): The start time of the clip in seconds.
     end_time (int): The end time of the clip in seconds.
 
@@ -66,55 +69,55 @@ def trim_video(video_path: str, output_name: str, start_time: int, end_time: int
     trimmed_clip = clip.subclip(start_time, end_time)
 
     # Write the result to a file (without processing audio)
-    trimmed_clip.write_videofile(output_name, audio=True)
+    trimmed_clip.write_videofile(output_path, audio=True)
 
     print("Video trimmed successfully!")
 
-    return output_name
+    return output_path
 
 
-def frames_to_video(folder_path, output_folder, output_video_name="output.avi", duration=10):
+def convert_images_to_video(image_list: List[str], output_file: str, frame_rate: int = 30):
     """
-    This function takes a folder with image files, orders them, and creates a video file from them.
-    The video is then saved in the designated output folder.
+    Converts a list of PIL Images to a video file.
 
     Args:
-    folder_path (str): Path to the folder with image files.
-    output_folder (str): Directory path where the video will be saved.
-    output_video_name (str): The name of the output video file.
-    duration (int): The desired duration of the output video in seconds.
-
-    Returns:
-    None
+        image_list (List[Image]): A list of PIL Images.
+        output_file (str): The name of the output video file.
+        frame_rate (int, optional): The frame rate of the output video. Defaults to 30.
     """
-    import glob
-    import os
-
     import cv2
+    import numpy as np
 
-    # Get the list of images
-    img_array = []
-    for filename in sorted(glob.glob(os.path.join(folder_path, "*.png"))):
-        img = cv2.imread(filename)
-        height, width, layers = img.shape
-        size = (width, height)
-        img_array.append(img)
+    # Convert PIL Images to NumPy arrays
+    frames = [np.array(img) for img in image_list]
 
-    # Calculate fps based on the desired duration
-    fps = len(img_array) / duration
+    # Get the resolution of the video
+    height, width, layers = frames[0].shape
+    size = (width, height)
 
-    # Check if output directory exists, if not, create it.
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
+    # Create an OpenCV VideoWriter object
+    video_writer = cv2.VideoWriter(output_file, cv2.VideoWriter_fourcc(*"mp4v"), frame_rate, size)
 
-    # Create a VideoWriter object
-    out = cv2.VideoWriter(os.path.join(output_folder, output_video_name), cv2.VideoWriter_fourcc(*"DIVX"), fps, size)
+    # Write each frame to the video file
+    for frame in frames:
+        video_writer.write(frame)
 
-    for i in range(len(img_array)):
-        out.write(img_array[i])
+    # Close the VideoWriter when done
+    video_writer.release()
 
-    out.release()
+    print("Images converted to video successfully!")
 
-    print("Video created successfully!")
+    return output_file
 
-    return output_folder
+
+def video_pipeline(
+    video_path: str = "test.mp4",
+    output_path: str = "output",
+    start_time: int = 0,
+    end_time: int = 5,
+    frame_rate: int = 1,
+):
+    edit_video = trim_video(video_path=video_path, output_path=output_path, start_time=start_time, end_time=end_time)
+    video2frame = video_to_frames(video_path=edit_video, output_path=output_path, frame_rate=frame_rate)
+
+    return video2frame

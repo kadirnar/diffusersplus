@@ -122,7 +122,7 @@ class StableDiffusionControlNetGenerator:
         stable_model_path: str = "runwayml/stable-diffusion-v1-5",
         controlnet_model_path: str = "lllyasviel/control_v11p_sd15_canny",
         scheduler_name: str = "DDIM",
-        images_list: List[str] = ["test.png"],
+        image_list: List[str] = ["test.png"],
         prompt: List[str] = ["A photo of a cat."],
         negative_prompt: List[str] = ["bad"],
         height: int = 512,
@@ -160,8 +160,9 @@ class StableDiffusionControlNetGenerator:
         Returns:
         output: The generated image.
         """
+
         control_image_list = []
-        for image_path in images_list:
+        for image_path in image_list:
             read_image = self.load_and_resize_image(
                 image_path=image_path, resize_type=resize_type, height=height, width=width, crop_size=crop_size
             )

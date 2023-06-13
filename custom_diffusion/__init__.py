@@ -1,5 +1,5 @@
+from custom_diffusion.pipelines.controlnet_img2img import StableDiffusionControlNetImg2ImgGenerator
 from custom_diffusion.pipelines.controlnet_inpaint_pipeline import StableDiffusionControlNetInpaintGenerator
 from custom_diffusion.pipelines.controlnet_pipeline import StableDiffusionControlNetGenerator
-from custom_diffusion.pipelines.controlnet_img2img import StableDiffusionControlNetImg2ImgGenerator
 
 __version__ = "0.1.5"
