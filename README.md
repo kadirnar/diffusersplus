@@ -1,6 +1,6 @@
 <div align="center">
 <h2>
-     Custom Diffusion: Creating Video from Frame Using Multiple Diffusion
+     Custom Diffusion: Creating Video from Frame Using Diffusion
 </h2>
 <div>
     <a href="https://pepy.tech/project/custom_diffusion"><img src="https://pepy.tech/badge/custom_diffusion" alt="downloads"></a>
