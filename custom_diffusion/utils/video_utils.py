@@ -69,6 +69,7 @@ def trim_video(video_path: str, output_path: str, start_time: int, end_time: int
     trimmed_clip = clip.subclip(start_time, end_time)
 
     # Write the result to a file (without processing audio)
+    output_path = output_path + ".mp4"
     trimmed_clip.write_videofile(output_path, audio=True)
 
     print("Video trimmed successfully!")
