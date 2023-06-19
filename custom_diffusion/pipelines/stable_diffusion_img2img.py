@@ -4,7 +4,6 @@ import torch
 from diffusers import StableDiffusionImg2ImgPipeline
 from PIL import Image
 
-from custom_diffusion.preprocces import preprocces_dicts
 from custom_diffusion.utils.data_utils import center_crop_and_resize
 from custom_diffusion.utils.scheduler_utils import get_scheduler
 
@@ -116,7 +115,6 @@ class StableDiffusionImg2ImgGenerator:
         guidance_scale: int = 7.0,
         strength: float = 0.5,
         generator_seed: int = 0,
-        preprocess_type: str = "Canny",
         resize_type: str = "center_crop_and_resize",
     ):
         """
@@ -142,14 +140,11 @@ class StableDiffusionImg2ImgGenerator:
         Returns:
         output: The generated image.
         """
-        control_image_list = []
         read_image_list = []
         for image_path in images_path_list:
             read_image = self.load_and_resize_image(
                 image_path=image_path, resize_type=resize_type, height=512, width=512, crop_size=512
             )
-            control_image = preprocces_dicts[preprocess_type](read_image)
-            control_image_list.append(control_image)
             read_image_list.append(read_image)
 
         pipe = self.load_model(
@@ -162,7 +157,6 @@ class StableDiffusionImg2ImgGenerator:
 
         output = pipe(
             prompt=prompt,
-            control_image=control_image_list,
             image=read_image_list,
             strength=strength,
             negative_prompt=negative_prompt,
