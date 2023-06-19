@@ -72,18 +72,27 @@ class StableDiffusionControlNetInpaintGenerator:
         return self.model_cache[model_key]
 
     def load_and_resize_image(
-        self, image: Image, resize_type: str, crop_size: Optional[int], height: Optional[int], width: Optional[int]
+        self,
+        image_path: str = "test.png",
+        resize_type: str = "center_crop_and_resize",
+        crop_size: Optional[int] = 512,
+        height: Optional[int] = 512,
+        width: Optional[int] = 512,
     ):
         """
-        This function loads and resizes an image to a specified size.
+        This function loads and resizes the image.
 
         Args:
-        image (Image): The PIL Image object.
+        image_path (str): Path to the image.
+        resize_type (str): The type of resizing to apply.
+        crop_size (int): The size of the crop.
+        height (int): The height of the image to generate.
+        width (int): The width of the image to generate.
 
         Returns:
         Image: The resized and loaded PIL Image.
         """
-        image = image.convert("RGB")
+        image = Image.open(image_path)
 
         if resize_type == "center_crop_and_resize":
             image = center_crop_and_resize(image, crop_size=crop_size, height=height, width=width)
@@ -94,9 +103,7 @@ class StableDiffusionControlNetInpaintGenerator:
         else:
             raise ValueError("Invalid resize type.")
 
-        image = np.array(image)
-
-        return Image.fromarray(image)
+        return image
 
     def _setup_generator(self, generator_seed):
         if generator_seed == 0:
@@ -111,12 +118,13 @@ class StableDiffusionControlNetInpaintGenerator:
         stable_model_path: str,
         controlnet_model_path: str,
         scheduler_name: str,
-        image_paths: str,
+        images_path_list: str,
+        mask_path_list: str,
         prompt: str,
         negative_prompt: str,
         height: int,
         width: int,
-        strength: int,
+        strength: float,
         guess_mode: bool,
         num_images_per_prompt: int,
         num_inference_steps: int,
@@ -151,14 +159,23 @@ class StableDiffusionControlNetInpaintGenerator:
         Returns:
         output: The generated image.
         """
-        normal_image = self.load_and_resize_image(
-            image=image_paths["image"], resize_type=resize_type, height=height, width=width
-        )
-        mask_image = self.load_and_resize_image(
-            image=image_paths["mask"], resize_type=resize_type, height=height, width=width
-        )
+        control_image_list = []
+        mask_image_list = []
+        image_path_list = []
 
-        control_image = preprocces_dicts[preprocess_type](normal_image)
+        for image_path in images_path_list:
+            normal_image = self.load_and_resize_image(
+                image=image_path, resize_type=resize_type, height=height, width=width
+            )
+            control_image = preprocces_dicts[preprocess_type](normal_image)
+            control_image_list.append(control_image)
+            image_path_list.append(image_path)
+
+        for mask_path in mask_path_list:
+            mask_image = self.load_and_resize_image(
+                image=mask_path, resize_type=resize_type, height=height, width=width
+            )
+            mask_image_list.append(mask_image)
 
         pipe = self.load_model(
             stable_model_path=stable_model_path,
@@ -170,13 +187,13 @@ class StableDiffusionControlNetInpaintGenerator:
 
         output = pipe(
             prompt=prompt,
-            image=normal_image,
+            image=image_path_list,
             height=height,
             width=width,
-            mask_image=mask_image,
+            mask_image=mask_image_list,
             strength=strength,
             guess_mode=guess_mode,
-            control_image=control_image,
+            control_image=control_image_list,
             negative_prompt=negative_prompt,
             num_images_per_prompt=num_images_per_prompt,
             num_inference_steps=num_inference_steps,

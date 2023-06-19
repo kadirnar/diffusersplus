@@ -1,19 +1,4 @@
 from custom_diffusion.pipelines.controlnet_pipeline import StableDiffusionControlNetGenerator
-from custom_diffusion.utils.data_utils import load_images_from_folder
-from custom_diffusion.utils.video_utils import frames_to_video, trim_video, video_to_frames
-
-
-def video_pipeline(
-    video_path: str = "test.mp4",
-    output_path: str = "output",
-    start_time: int = 0,
-    end_time: int = 5,
-    frame_rate: int = 1,
-):
-    edit_video = trim_video(video_path=video_path, output_path=output_path, start_time=start_time, end_time=end_time)
-    video2frame = video_to_frames(video_path=edit_video, output_path=output_path, frame_rate=frame_rate)
-
-    return video2frame
 
 
 def main(
