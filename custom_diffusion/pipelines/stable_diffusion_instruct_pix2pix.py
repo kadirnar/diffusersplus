@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 import torch
-from diffusers import  StableDiffusionInstructPix2PixPipeline
+from diffusers import StableDiffusionInstructPix2PixPipeline
 from PIL import Image
 
 from custom_diffusion.preprocces import preprocces_dicts
@@ -26,7 +26,7 @@ class StableDiffusionInstructPix2PixGenerator:
         stable_model_path (str): Path to the stable diffusion pipeline.
 
         """
-        self.pipe =  StableDiffusionInstructPix2PixPipeline.from_pretrained(
+        self.pipe = StableDiffusionInstructPix2PixPipeline.from_pretrained(
             pretrained_model_name_or_path=stable_model_path,
             safety_checker=None,
             torch_dtype=torch.float16,

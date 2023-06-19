@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 import torch
-from diffusers import  StableDiffusionPipeline
+from diffusers import StableDiffusionPipeline
 
 from custom_diffusion.utils.scheduler_utils import get_scheduler
 
@@ -23,7 +23,7 @@ class StableDiffusionText2ImgGenerator:
         stable_model_path (str): Path to the stable diffusion pipeline.
 
         """
-        self.pipe =  StableDiffusionPipeline.from_pretrained(
+        self.pipe = StableDiffusionPipeline.from_pretrained(
             pretrained_model_name_or_path=stable_model_path,
             safety_checker=None,
             torch_dtype=torch.float16,
