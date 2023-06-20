@@ -26,8 +26,8 @@ from custom_diffusion.utils.video_utils import convert_images_to_video, video_pi
 
 # Creating a video from a video file
 frames_path = video_pipeline(
-    video_path="../../data/videos/anime_v0.mp4",
-    output_path="../../output",
+    video_path="test.mp4",
+    output_path="output",
     start_time=0,
     end_time=2,
     frame_rate=1,
@@ -62,7 +62,7 @@ generated_image_list = generator.generate_image(
 # Converting the generated images to a video
 frame2video = convert_images_to_video(
     image_list=generated_image_list,
-    output_file="../../generated_video.mp4",
+    output_file="generated_video.mp4",
     frame_rate=10,
 )
 ```
