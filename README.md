@@ -20,22 +20,21 @@ pip install custom_diffusion
 
 # Importing the required libraries
 
-from custom_diffusion.utils.data_utils import load_images_from_folder
-from custom_diffusion import StableDiffusionControlNetGenerator
-from custom_diffusion.utils.video_utils import convert_images_to_video
-from custom_diffusion.demo import video_pipeline
+from custom_diffusion.utils.data_utils import image_grid, load_images_from_folder
+from custom_diffusion.pipelines.stable_diffusion_img2img import StableDiffusionImg2ImgGenerator
+from custom_diffusion.utils.video_utils import convert_images_to_video, video_pipeline
 
 # Creating a video from a video file
 frames_path = video_pipeline(
-    video_path="test.mp4",
-    output_path="output.mp4",
+    video_path="../../data/videos/anime_v0.mp4",
+    output_path="../../output",
     start_time=0,
-    end_time=5,
+    end_time=2,
     frame_rate=1,
 )
 
 # Creating a video from a folder of images
-images_list = load_images_from_folder(frames_path)
+images_list = load_images_from_folder(frames_path, pil_image=False)
 
 prompt = "a anime boy"
 negative_prompt = "bad"
@@ -44,32 +43,26 @@ list_prompt = [prompt] * len(images_list)
 list_negative_prompt = [negative_prompt] * len(images_list)
 
 # Generating images from a list of images
-generator = StableDiffusionControlNetGenerator()
+generator = StableDiffusionImg2ImgGenerator()
 
 generated_image_list = generator.generate_image(
-    stable_model_path="andite/anything-v4.0",
-    controlnet_model_path="lllyasviel/control_v11p_sd15_canny",
+    stable_model_path="dreamlike-art/dreamlike-anime-1.0",
     scheduler_name="EulerAncestralDiscrete",
-    images_list=images_list,
+    images_path_list=images_list,
     prompt=list_prompt,
+    strength=0.3,
     negative_prompt=list_negative_prompt,
-    height=512,
-    width=512,
-    guess_mode=False,
     num_images_per_prompt=1,
-    num_inference_steps=30,
+    num_inference_steps=50,
     guidance_scale=7.0,
-    controlnet_conditioning_scale=1.0,
     generator_seed=0,
-    preprocess_type="Canny",
-    resize_type="center_crop_and_resize",
-    crop_size=512,
+    resize_type="resize",
 )
 
 # Converting the generated images to a video
 frame2video = convert_images_to_video(
     image_list=generated_image_list,
-    output_file="output.mp4",
-    frame_rate=5,
+    output_file="../../generated_video_v2.mp4",
+    frame_rate=10,
 )
 ```

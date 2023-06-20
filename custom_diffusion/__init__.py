@@ -2,4 +2,4 @@ from custom_diffusion.pipelines.controlnet_img2img import StableDiffusionControl
 from custom_diffusion.pipelines.controlnet_inpaint import StableDiffusionControlNetInpaintGenerator
 from custom_diffusion.pipelines.controlnet_pipeline import StableDiffusionControlNetGenerator
 
-__version__ = "0.1.5"
+__version__ = "0.1.10"
