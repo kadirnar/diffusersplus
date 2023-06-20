@@ -50,7 +50,7 @@ generated_image_list = generator.generate_image(
     scheduler_name="EulerAncestralDiscrete",
     images_path_list=images_list,
     prompt=list_prompt,
-    strength=0.3,
+    strength=0.4,
     negative_prompt=list_negative_prompt,
     num_images_per_prompt=1,
     num_inference_steps=50,
@@ -62,7 +62,7 @@ generated_image_list = generator.generate_image(
 # Converting the generated images to a video
 frame2video = convert_images_to_video(
     image_list=generated_image_list,
-    output_file="../../generated_video_v2.mp4",
+    output_file="../../generated_video.mp4",
     frame_rate=10,
 )
 ```
