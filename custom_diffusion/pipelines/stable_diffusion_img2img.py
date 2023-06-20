@@ -116,6 +116,9 @@ class StableDiffusionImg2ImgGenerator:
         strength: float = 0.5,
         generator_seed: int = 0,
         resize_type: str = "center_crop_and_resize",
+        crop_size: Optional[int] = 512,
+        height: Optional[int] = 512,
+        width: Optional[int] = 512,
     ):
         """
         This function generates an image based on the given parameters.
@@ -143,7 +146,7 @@ class StableDiffusionImg2ImgGenerator:
         read_image_list = []
         for image_path in images_path_list:
             read_image = self.load_and_resize_image(
-                image_path=image_path, resize_type=resize_type, height=512, width=512, crop_size=512
+                image_path=image_path, resize_type=resize_type, height=height, width=width, crop_size=crop_size
             )
             read_image_list.append(read_image)
 
