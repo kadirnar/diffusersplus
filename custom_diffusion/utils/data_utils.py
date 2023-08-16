@@ -1,3 +1,8 @@
+from typing import Optional, Union
+
+from PIL import Image
+
+
 def image_grid(imgs, rows, cols):
     """
     This function takes a list of images and creates a grid of images from them.
@@ -74,3 +79,37 @@ def center_crop_and_resize(image, crop_size, height, width):
     resized_img = cropped_img.resize((height, width))
 
     return resized_img
+
+
+def load_and_resize_image(
+    image_path: str = "test.png",
+    resize_type: str = "center_crop_and_resize",
+    crop_size: Optional[int] = 512,
+    height: Optional[int] = 512,
+    width: Optional[int] = 512,
+) -> Image.Image:
+    """
+    Load and resize the image based on the provided parameters.
+
+    Args:
+    - image_path (str): Path to the image.
+    - resize_type (str): The type of resizing to apply.
+    - crop_size (int): The size of the crop.
+    - height (int): The height of the image after resizing.
+    - width (int): The width of the image after resizing.
+
+    Returns:
+    - Image.Image: The resized and loaded PIL Image.
+    """
+    image = Image.open(image_path)
+
+    if resize_type == "center_crop_and_resize":
+        image = center_crop_and_resize(image, crop_size=crop_size, height=height, width=width)
+
+    elif resize_type == "resize":
+        image = image.resize((height, width))
+
+    else:
+        raise ValueError("Invalid resize type.")
+
+    return image
