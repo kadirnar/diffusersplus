@@ -50,7 +50,7 @@ class StableDiffusionControlNetGenerator(BaseDiffusionModel):
             torch_dtype=torch.float16,
         )
 
-    def generate_output(
+    def __call__(
         self,
         model_path: str = "runwayml/stable-diffusion-v1-5",
         controlnet_model_path: str = "lllyasviel/sd-controlnet-canny",
