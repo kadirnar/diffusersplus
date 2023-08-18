@@ -1,30 +1,32 @@
 from typing import List, Optional
 
 import torch
-from diffusers import ControlNetModel, StableDiffusionControlNetPipeline
+from diffusers import ControlNetModel, StableDiffusionControlNetInpaintPipeline
+from PIL import Image
 
-from custom_diffusion.pipelines.base import BaseDiffusionModel
-from custom_diffusion.preprocces import preprocces_dicts
-from custom_diffusion.utils.data_utils import load_and_resize_image
+from diffusersplus.pipelines.base import BaseDiffusionModel
+from diffusersplus.preprocces import preprocces_dicts
+from diffusersplus.utils.data_utils import load_and_resize_image
 
 
-class StableDiffusionControlNetGenerator(BaseDiffusionModel):
+class StableDiffusionControlNetInpaintGenerator(BaseDiffusionModel):
     """
-    A class to handle image generation using stable diffusion and control net models.
+    A class to handle image inpainting using stable diffusion and control net models.
 
-    Provides functionalities to generate images using a combination of stable diffusion
+    This class provides functionalities to inpaint images using a combination of stable diffusion
     and control net models. The models can be specified using their paths, and other parameters
-    can be adjusted to fine-tune the image generation process.
+    can be adjusted to fine-tune the inpainting process.
 
     Example:
         ```
-        generator = StableDiffusionControlNetGenerator()
-        generated_image = generator.generate_output(
-            image_path="path_to_image.png",
+        generator = StableDiffusionControlNetInpaintGenerator()
+        inpainted_image = generator.generate_output(
+            image_path="path_to_image_with_holes.png",
+            mask_path="path_to_mask.png",
             model_path="model_path",
             controlnet_model_path="controlnet_model_path",
             scheduler_name="DDIM",
-            prompt="A clear high-resolution image of a cat.",
+            prompt="A fully restored image of a cat.",
         )
         ```
 
@@ -36,14 +38,14 @@ class StableDiffusionControlNetGenerator(BaseDiffusionModel):
         controlnet_model_path: str = "lllyasviel/sd-controlnet-canny",
     ):
         """
-        Load the stable diffusion pipeline with control net model.
+        Load the stable diffusion inpainting pipeline with control net model.
 
         Args:
-            model_path (str): Path to the stable diffusion pipeline with control net model.
+            model_path (str): Path to the stable diffusion inpainting pipeline with control net model.
             controlnet_model_path (str): Path to the control net model.
         """
         controlnet = ControlNetModel.from_pretrained(controlnet_model_path, torch_dtype=torch.float16)
-        self.pipe = StableDiffusionControlNetPipeline.from_pretrained(
+        self.pipe = StableDiffusionControlNetInpaintPipeline.from_pretrained(
             pretrained_model_name_or_path=model_path,
             controlnet=controlnet,
             safety_checker=None,
@@ -55,13 +57,15 @@ class StableDiffusionControlNetGenerator(BaseDiffusionModel):
         model_path: str = "runwayml/stable-diffusion-v1-5",
         controlnet_model_path: str = "lllyasviel/sd-controlnet-canny",
         scheduler_name: str = "DDIM",
-        image_path: str = "test.png",
-        prompt: str = "A photo of a cat.",
+        image_path: str = "damaged_image.png",
+        mask_path: str = "mask.png",
+        prompt: str = "A fully restored image.",
         negative_prompt: str = "bad",
         height: int = 512,
         width: int = 512,
         preprocess_type: str = "Canny",
         resize_type: str = "center_crop_and_resize",
+        strength: float = 0.5,
         guess_mode: bool = False,
         num_images_per_prompt: int = 1,
         num_inference_steps: int = 20,
@@ -70,17 +74,18 @@ class StableDiffusionControlNetGenerator(BaseDiffusionModel):
         generator_seed: int = 0,
     ) -> torch.Tensor:
         """
-        Generate an image based on the provided parameters.
+        Generate an inpainted image based on the provided parameters.
 
         Args:
-            ... [Similar to the previous version but adjusted to single image and prompt strings]
+            ... [Similar to the previous version but adjusted to single image, mask and prompt strings]
 
         Returns:
-            output (torch.Tensor): The generated image.
+            output (torch.Tensor): The inpainted image.
         """
 
-        # Load image and preprocess
+        # Load image, mask and preprocess
         read_image = load_and_resize_image(image_path=image_path, resize_type=resize_type, height=height, width=width)
+        mask_image = load_and_resize_image(image_path=mask_path, resize_type=resize_type, height=height, width=width)
         control_image = preprocces_dicts[preprocess_type](read_image)
 
         # Load model and set up pipeline
@@ -88,13 +93,16 @@ class StableDiffusionControlNetGenerator(BaseDiffusionModel):
         self._load_diffusion_pipeline(model_path=model_path, controlnet_model_path=controlnet_model_path)
         generator = self._setup_generator(generator_seed)
 
-        # Generate the image
+        # Generate the inpainted image
         output = pipe(
             prompt=prompt,
             height=height,
             width=width,
             guess_mode=guess_mode,
-            image=control_image,
+            control_image=control_image,
+            mask_image=mask_image,
+            image=read_image,
+            strength=strength,
             negative_prompt=negative_prompt,
             num_images_per_prompt=num_images_per_prompt,
             num_inference_steps=num_inference_steps,

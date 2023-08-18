@@ -1,4 +1,4 @@
-from custom_diffusion.pipelines.controlnet import StableDiffusionControlNetGenerator
+from diffusersplus.pipelines.controlnet import StableDiffusionControlNetGenerator
 
 
 def main(

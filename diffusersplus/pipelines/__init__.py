@@ -4,3 +4,4 @@ from .controlnet_inpaint import StableDiffusionControlNetInpaintGenerator
 from .stable_img2img import StableDiffusionImg2ImgGenerator
 from .stable_txt2img import StableDiffusionText2ImgGenerator
 from .stable_upscale import StableDiffusionUpscaleGenerator
+from .base import BaseDiffusionModel

@@ -4,9 +4,9 @@ import torch
 from diffusers import ControlNetModel, StableDiffusionControlNetImg2ImgPipeline
 from PIL import Image
 
-from custom_diffusion.pipelines.base import BaseDiffusionModel
-from custom_diffusion.preprocces import preprocces_dicts
-from custom_diffusion.utils.data_utils import load_and_resize_image
+from diffusersplus.pipelines.base import BaseDiffusionModel
+from diffusersplus.preprocces import preprocces_dicts
+from diffusersplus.utils.data_utils import load_and_resize_image
 
 
 class StableDiffusionControlNetImg2ImgGenerator(BaseDiffusionModel):
