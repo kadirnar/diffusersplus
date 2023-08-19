@@ -1,7 +1,7 @@
 <div align="center">
 <h2>
-     Custom Diffusion: Creating Video from Frame Using Diffusion
-</h2>
+     Diffusers++: A More User-Friendly Diffusion Library.
+</h2> 
 <div>
     <a href="https://pepy.tech/project/diffusersplus"><img src="https://pepy.tech/badge/diffusersplus" alt="downloads"></a>
     <a href="https://badge.fury.io/py/diffusersplus"><img src="https://badge.fury.io/py/diffusersplus.svg" alt="pypi version"></a>
