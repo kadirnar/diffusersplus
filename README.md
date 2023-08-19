@@ -49,7 +49,9 @@ output = model(
 from diffusersplus import diffusion_pipeline
 
 model = diffusion_pipeline(
-    task_id="stable-img2img", stable_model_id="dreamlike-art/dreamlike-anime-1.0", scheduler_name="DDIM"
+    task_id="stable-img2img",
+    stable_model_id="dreamlike-art/dreamlike-anime-1.0",
+    scheduler_name="DDIM"
 )
 
 output = model(
@@ -73,7 +75,9 @@ output = model(
 from diffusersplus import diffusion_pipeline
 
 model = diffusion_pipeline(
-    task_id="stable-upscale", stable_model_id="stabilityai/stable-diffusion-x4-upscaler", scheduler_name="DDIM"
+    task_id="stable-upscale",
+    stable_model_id="stabilityai/stable-diffusion-x4-upscaler",
+    scheduler_name="DDIM"
 )
 
 output = model(
