@@ -66,6 +66,7 @@ output = model(
     height=512,
     width=512,
 )
+```
 
 ### Stable Diffusion Upscale:
 ```python
@@ -87,6 +88,7 @@ output = model(
     generator_seed=0,
 )
 ```
+
 ### Controlnet:
 ```python
 from diffusersplus.automodel import diffusion_pipeline
