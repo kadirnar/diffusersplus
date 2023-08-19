@@ -31,7 +31,7 @@ model = diffusion_pipeline(
 )
 
 output = model(
-    prompt="A photo of a anime character",
+    prompt="A photo of an anime character",
     negative_prompt="bad",
     num_images_per_prompt=1,
     num_inference_steps=30,
@@ -46,7 +46,7 @@ output = model(
 ### Stable Diffusion Image2Image Generate:
 
 ```python	
-from diffusersplus.automodel import diffusion_pipeline
+from diffusersplus import diffusion_pipeline
 
 model = diffusion_pipeline(
     task_id="stable-img2img", stable_model_id="dreamlike-art/dreamlike-anime-1.0", scheduler_name="DDIM"
@@ -66,11 +66,10 @@ output = model(
     height=512,
     width=512,
 )
-```
 
 ### Stable Diffusion Upscale:
 ```python
-from diffusersplus.automodel import diffusion_pipeline
+from diffusersplus import diffusion_pipeline
 
 model = diffusion_pipeline(
     task_id="stable-upscale", stable_model_id="stabilityai/stable-diffusion-x4-upscaler", scheduler_name="DDIM"
@@ -88,10 +87,9 @@ output = model(
     generator_seed=0,
 )
 ```
-
 ### Controlnet:
 ```python
-from diffusersplus.automodel import diffusion_pipeline
+from diffusersplus import diffusion_pipeline
 
 model = diffusion_pipeline(
     task_id="controlnet",
@@ -118,7 +116,7 @@ output = model(
 
 ### Controlnet Inpaint:
 ```python
-from diffusersplus.automodel import diffusion_pipeline
+from diffusersplus import diffusion_pipeline
 
 model = diffusion_pipeline(
     task_id="controlnet-inpaint",
@@ -147,7 +145,7 @@ output = model(
 
 ### Controlnet Image2Image:
 ```python
-from diffusersplus.automodel import diffusion_pipeline
+from diffusersplus import diffusion_pipeline
 
 model = diffusion_pipeline(
     task_id="controlnet-img2img",
