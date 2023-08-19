@@ -3,7 +3,9 @@
      Diffusers++: A More User-Friendly Diffusion Library.
 </h2> 
 <div>
-    <a href="https://pepy.tech/project/diffusersplus"><img src="https://pepy.tech/badge/diffusersplus" alt="downloads"></a>
+    <a href="https://pypi.org/project/diffusersplus" target="_blank">
+        <img src="https://img.shields.io/pypi/pyversions/diffusersplus.svg?color=%2334D058" alt="Supported Python versions">
+    </a>
     <a href="https://badge.fury.io/py/diffusersplus"><img src="https://badge.fury.io/py/diffusersplus.svg" alt="pypi version"></a>
     <a href="https://huggingface.co/spaces/ArtGAN/Image-Diffusion-WebUI"><img src="https://huggingface.co/datasets/huggingface/badges/raw/main/open-in-hf-spaces-sm.svg" alt="HuggingFace Spaces"></a>
 </div>
@@ -40,6 +42,7 @@ output = model(
     width=512,
 )
 ```
+
 ### Stable Diffusion Image2Image Generate:
 
 ```python	
