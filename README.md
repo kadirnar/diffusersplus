@@ -66,6 +66,7 @@ output = model(
     height=512,
     width=512,
 )
+```
 
 ### Stable Diffusion Upscale:
 ```python
