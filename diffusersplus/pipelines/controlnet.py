@@ -11,51 +11,36 @@ from diffusersplus.utils.data_utils import load_and_resize_image
 class StableDiffusionControlNetGenerator(BaseDiffusionModel):
     """
     A class to handle image generation using stable diffusion and control net models.
-
-    Provides functionalities to generate images using a combination of stable diffusion
-    and control net models. The models can be specified using their paths, and other parameters
-    can be adjusted to fine-tune the image generation process.
-
-    Example:
-        ```
-        generator = StableDiffusionControlNetGenerator()
-        generated_image = generator.generate_output(
-            image_path="path_to_image.png",
-            model_path="model_path",
-            controlnet_model_path="controlnet_model_path",
-            scheduler_name="DDIM",
-            prompt="A clear high-resolution image of a cat.",
-        )
-        ```
-
     """
 
-    def _load_diffusion_pipeline(
+    def __init__(
         self,
-        model_path: str = "runwayml/stable-diffusion-v1-5",
-        controlnet_model_path: str = "lllyasviel/sd-controlnet-canny",
+        stable_model_id: str = "runwayml/stable-diffusion-v1-5",
+        controlnet_model_id: str = "lllyasviel/sd-controlnet-canny",
+        scheduler_name: str = "DDIM",
     ):
+        super().__init__()
+        self.stable_model_id = stable_model_id
+        self.controlnet_model_id = controlnet_model_id
+        self.scheduler_name = scheduler_name
+
+    def _load_diffusion_pipeline(self):
         """
         Load the stable diffusion pipeline with control net model.
-
-        Args:
-            model_path (str): Path to the stable diffusion pipeline with control net model.
-            controlnet_model_path (str): Path to the control net model.
         """
-        controlnet = ControlNetModel.from_pretrained(controlnet_model_path, torch_dtype=torch.float16)
-        self.pipe = StableDiffusionControlNetPipeline.from_pretrained(
-            pretrained_model_name_or_path=model_path,
-            controlnet=controlnet,
-            safety_checker=None,
-            torch_dtype=torch.float16,
-        )
+        if not hasattr(self, "pipe") or self.pipe is None:
+            controlnet = ControlNetModel.from_pretrained(self.controlnet_model_id, torch_dtype=torch.float16)
+            self.pipe = StableDiffusionControlNetPipeline.from_pretrained(
+                pretrained_model_name_or_path=self.stable_model_id,
+                controlnet=controlnet,
+                safety_checker=None,
+                torch_dtype=torch.float16,
+            )
+            self.load_scheduler("stable", self.stable_model_id, self.scheduler_name)
 
     def __call__(
         self,
-        model_path: str = "runwayml/stable-diffusion-v1-5",
-        controlnet_model_path: str = "lllyasviel/sd-controlnet-canny",
-        scheduler_name: str = "DDIM",
-        image_path: str = "test.png",
+        image_path: str,
         prompt: str = "A photo of a cat.",
         negative_prompt: str = "bad",
         height: int = 512,
@@ -71,12 +56,6 @@ class StableDiffusionControlNetGenerator(BaseDiffusionModel):
     ) -> torch.Tensor:
         """
         Generate an image based on the provided parameters.
-
-        Args:
-            ... [Similar to the previous version but adjusted to single image and prompt strings]
-
-        Returns:
-            output (torch.Tensor): The generated image.
         """
 
         # Load image and preprocess
@@ -84,12 +63,11 @@ class StableDiffusionControlNetGenerator(BaseDiffusionModel):
         control_image = preprocces_dicts[preprocess_type](read_image)
 
         # Load model and set up pipeline
-        pipe = self.load_model(model_path=model_path, scheduler_name=scheduler_name)
-        self._load_diffusion_pipeline(model_path=model_path, controlnet_model_path=controlnet_model_path)
-        generator = self._setup_generator(generator_seed)
+        self._load_diffusion_pipeline()
+        generator = self._configure_random_generator(generator_seed)
 
         # Generate the image
-        output = pipe(
+        output = self.pipe(
             prompt=prompt,
             height=height,
             width=width,

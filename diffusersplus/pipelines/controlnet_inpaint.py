@@ -12,53 +12,37 @@ from diffusersplus.utils.data_utils import load_and_resize_image
 class StableDiffusionControlNetInpaintGenerator(BaseDiffusionModel):
     """
     A class to handle image inpainting using stable diffusion and control net models.
-
-    This class provides functionalities to inpaint images using a combination of stable diffusion
-    and control net models. The models can be specified using their paths, and other parameters
-    can be adjusted to fine-tune the inpainting process.
-
-    Example:
-        ```
-        generator = StableDiffusionControlNetInpaintGenerator()
-        inpainted_image = generator.generate_output(
-            image_path="path_to_image_with_holes.png",
-            mask_path="path_to_mask.png",
-            model_path="model_path",
-            controlnet_model_path="controlnet_model_path",
-            scheduler_name="DDIM",
-            prompt="A fully restored image of a cat.",
-        )
-        ```
-
     """
 
-    def _load_diffusion_pipeline(
+    def __init__(
         self,
-        model_path: str = "runwayml/stable-diffusion-v1-5",
-        controlnet_model_path: str = "lllyasviel/sd-controlnet-canny",
+        stable_model_id: str = "runwayml/stable-diffusion-v1-5",
+        controlnet_model_id: str = "lllyasviel/sd-controlnet-canny",
+        scheduler_name: str = "DDIM",
     ):
+        super().__init__()
+        self.stable_model_id = stable_model_id
+        self.controlnet_model_id = controlnet_model_id
+        self.scheduler_name = scheduler_name
+
+    def _load_diffusion_pipeline(self):
         """
         Load the stable diffusion inpainting pipeline with control net model.
-
-        Args:
-            model_path (str): Path to the stable diffusion inpainting pipeline with control net model.
-            controlnet_model_path (str): Path to the control net model.
         """
-        controlnet = ControlNetModel.from_pretrained(controlnet_model_path, torch_dtype=torch.float16)
-        self.pipe = StableDiffusionControlNetInpaintPipeline.from_pretrained(
-            pretrained_model_name_or_path=model_path,
-            controlnet=controlnet,
-            safety_checker=None,
-            torch_dtype=torch.float16,
-        )
+        if not hasattr(self, "pipe") or self.pipe is None:
+            controlnet = ControlNetModel.from_pretrained(self.controlnet_model_id, torch_dtype=torch.float16)
+            self.pipe = StableDiffusionControlNetInpaintPipeline.from_pretrained(
+                pretrained_model_name_or_path=self.stable_model_id,
+                controlnet=controlnet,
+                safety_checker=None,
+                torch_dtype=torch.float16,
+            )
+            self.load_scheduler("stable", self.stable_model_id, self.scheduler_name)
 
     def __call__(
         self,
-        model_path: str = "runwayml/stable-diffusion-v1-5",
-        controlnet_model_path: str = "lllyasviel/sd-controlnet-canny",
-        scheduler_name: str = "DDIM",
-        image_path: str = "damaged_image.png",
-        mask_path: str = "mask.png",
+        image_path: str,
+        mask_path: str,
         prompt: str = "A fully restored image.",
         negative_prompt: str = "bad",
         height: int = 512,
@@ -75,26 +59,20 @@ class StableDiffusionControlNetInpaintGenerator(BaseDiffusionModel):
     ) -> torch.Tensor:
         """
         Generate an inpainted image based on the provided parameters.
-
-        Args:
-            ... [Similar to the previous version but adjusted to single image, mask and prompt strings]
-
-        Returns:
-            output (torch.Tensor): The inpainted image.
         """
+
+        # Modeli yükle
+        self._load_diffusion_pipeline()
 
         # Load image, mask and preprocess
         read_image = load_and_resize_image(image_path=image_path, resize_type=resize_type, height=height, width=width)
         mask_image = load_and_resize_image(image_path=mask_path, resize_type=resize_type, height=height, width=width)
         control_image = preprocces_dicts[preprocess_type](read_image)
 
-        # Load model and set up pipeline
-        pipe = self.load_model(model_path=model_path, scheduler_name=scheduler_name)
-        self._load_diffusion_pipeline(model_path=model_path, controlnet_model_path=controlnet_model_path)
-        generator = self._setup_generator(generator_seed)
+        generator = self._configure_random_generator(generator_seed)
 
         # Generate the inpainted image
-        output = pipe(
+        output = self.pipe(
             prompt=prompt,
             height=height,
             width=width,

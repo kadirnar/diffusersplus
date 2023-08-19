@@ -11,12 +11,11 @@ class StableDiffusionUpscaleGenerator(BaseDiffusionModel):
     """
 
     def __init__(
-        self, 
+        self,
         stable_model_id: str = "runwayml/stable-diffusion-v1-5",
         controlnet_model_id: str = None,
-        scheduler_name: str = "DDIM"
+        scheduler_name: str = "DDIM",
     ):
-        
         super().__init__()
         self.stable_model_id = stable_model_id
         self.controlnet_model_id = controlnet_model_id
@@ -26,12 +25,12 @@ class StableDiffusionUpscaleGenerator(BaseDiffusionModel):
         """
         Load the stable diffusion upscale pipeline.
         """
-        if not hasattr(self, 'pipe') or self.pipe is None:
+        if not hasattr(self, "pipe") or self.pipe is None:
             self.pipe = StableDiffusionUpscalePipeline.from_pretrained(
                 pretrained_model_name_or_path=self.stable_model_id,
                 safety_checker=None,
                 torch_dtype=torch.float16,
-                revision="fp16"
+                revision="fp16",
             )
             self.load_scheduler("stable", self.stable_model_id, self.scheduler_name)
 

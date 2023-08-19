@@ -1,6 +1,8 @@
 import torch
 from diffusers import StableDiffusionPipeline
+
 from ..pipelines.base import BaseDiffusionModel
+
 
 class StableDiffusionText2ImgGenerator(BaseDiffusionModel):
     """
@@ -14,13 +16,7 @@ class StableDiffusionText2ImgGenerator(BaseDiffusionModel):
     ```
     """
 
-    def __init__(
-        self, 
-        stable_model_id: str = None,
-        controlnet_model_id: str = None,
-        scheduler_name=None
-    ):
-        
+    def __init__(self, stable_model_id: str = None, controlnet_model_id: str = None, scheduler_name=None):
         super().__init__()
         self.stable_model_id = stable_model_id
         self.controlnet_model_id = controlnet_model_id

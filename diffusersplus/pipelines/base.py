@@ -1,7 +1,9 @@
 from typing import Dict, Union
+
 import torch
 
 from ..utils.scheduler_utils import get_scheduler
+
 
 class BaseDiffusionModel:
     """
@@ -113,12 +115,14 @@ class BaseDiffusionModel:
 
         Args:
         - model_type (str): Type of the model (e.g., "stable", "controlnet", "pix2pix").
-        
+
         Raises:
         - RuntimeError: If the model of the given type has not been loaded.
         """
         if not self.model_cache[model_type]:
-            raise RuntimeError(f"The {model_type} model has not been loaded. Please load the model using the appropriate function.")
+            raise RuntimeError(
+                f"The {model_type} model has not been loaded. Please load the model using the appropriate function."
+            )
 
     def __call__(self, model_path: str, scheduler_name: str, model_type: str, **kwargs) -> Union[torch.Tensor, Dict]:
         """

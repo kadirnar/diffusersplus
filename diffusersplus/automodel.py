@@ -1,3 +1,5 @@
+from typing import List, Optional
+
 from diffusersplus.pipelines import (
     StableDiffusionControlNetGenerator,
     StableDiffusionControlNetImg2ImgGenerator,
@@ -6,11 +8,7 @@ from diffusersplus.pipelines import (
     StableDiffusionText2ImgGenerator,
     StableDiffusionUpscaleGenerator,
 )
-
 from diffusersplus.pipelines.base import BaseDiffusionModel
-
-from typing import List, Optional
-
 
 TASK_ID_TO_CLASS_MAPPING = {
     "stable-txt2img": StableDiffusionText2ImgGenerator,
@@ -22,7 +20,9 @@ TASK_ID_TO_CLASS_MAPPING = {
 }
 
 
-def diffusion_pipeline(task_id: str, stable_model_id: str = None, controlnet_model_id: str = None, scheduler_name: str = None) -> BaseDiffusionModel:
+def diffusion_pipeline(
+    task_id: str, stable_model_id: str = None, controlnet_model_id: str = None, scheduler_name: str = None
+) -> BaseDiffusionModel:
     """
     Create and return an instance of the specified diffusion model based on the task ID.
 
@@ -39,6 +39,8 @@ def diffusion_pipeline(task_id: str, stable_model_id: str = None, controlnet_mod
     if not DiffusionModelClass:
         raise ValueError(f"Unsupported task ID: {task_id}")
 
-    model_instance = DiffusionModelClass(stable_model_id=stable_model_id, controlnet_model_id=controlnet_model_id, scheduler_name=scheduler_name)
+    model_instance = DiffusionModelClass(
+        stable_model_id=stable_model_id, controlnet_model_id=controlnet_model_id, scheduler_name=scheduler_name
+    )
 
     return model_instance

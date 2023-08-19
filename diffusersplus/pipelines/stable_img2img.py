@@ -13,13 +13,7 @@ class StableDiffusionImg2ImgGenerator(BaseDiffusionModel):
     Inherits from the BaseDiffusionModel to utilize core functionalities.
     """
 
-    def __init__(
-        self, 
-        stable_model_id: str = None,
-        controlnet_model_id: str = None,
-        scheduler_name: str = None
-    ):
-        
+    def __init__(self, stable_model_id: str = None, controlnet_model_id: str = None, scheduler_name: str = None):
         super().__init__()
         self.stable_model_id = stable_model_id
         self.controlnet_model_id = controlnet_model_id
@@ -29,7 +23,7 @@ class StableDiffusionImg2ImgGenerator(BaseDiffusionModel):
         """
         Load the stable diffusion pipeline specific to image-to-image generation.
         """
-        if not hasattr(self, 'pipe') or self.pipe is None:
+        if not hasattr(self, "pipe") or self.pipe is None:
             self.pipe = StableDiffusionImg2ImgPipeline.from_pretrained(
                 pretrained_model_name_or_path=self.stable_model_id,
                 safety_checker=None,
