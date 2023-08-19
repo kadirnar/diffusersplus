@@ -18,7 +18,7 @@ def get_requirements():
 
 def get_version():
     current_dir = os.path.abspath(os.path.dirname(__file__))
-    version_file = os.path.join(current_dir, "custom_diffusion", "__init__.py")
+    version_file = os.path.join(current_dir, "diffusersplus", "__init__.py")
     with io.open(version_file, encoding="utf-8") as f:
         return re.search(r'^__version__ = [\'"]([^\'"]*)[\'"]', f.read(), re.M).group(1)
 
@@ -35,11 +35,11 @@ extras = {"dev": _DEV_REQUIREMENTS}
 
 
 setuptools.setup(
-    name="custom_diffusion",
+    name="diffusersplus",
     version=get_version(),
     author="kadirnar",
     license="Apache License 2.0",
-    description="Custom Diffusion: Creating Video from Frame Using Multiple Diffusion",
+    description="diffusersplus: A collection of pipelines for Stable Diffusion and ControlNet models.",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
     url="https://github.com/kadirnar/Custom-Diffusion",
