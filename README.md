@@ -1,6 +1,6 @@
 <div align="center">
 <h2>
-     Diffusers++: A More User-Friendly Diffusion Library.
+     Diffusers++: A User-Friendly and Diffusers-Based Library.
 </h2> 
 <div>
     <a href="https://pypi.org/project/diffusersplus" target="_blank">
