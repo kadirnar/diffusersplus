@@ -1,12 +1,14 @@
-from typing import List, Optional
+from typing import Optional
 
 from diffusersplus.pipelines import (
     StableDiffusionControlNetGenerator,
     StableDiffusionControlNetImg2ImgGenerator,
     StableDiffusionControlNetInpaintGenerator,
     StableDiffusionImg2ImgGenerator,
+    StableDiffusionT2iAdapterGenerator,
     StableDiffusionText2ImgGenerator,
     StableDiffusionUpscaleGenerator,
+    StableDiffusionXLImageGenerator,
 )
 from diffusersplus.pipelines.base import BaseDiffusionModel
 
@@ -17,11 +19,18 @@ TASK_ID_TO_CLASS_MAPPING = {
     "controlnet": StableDiffusionControlNetGenerator,
     "controlnet-img2img": StableDiffusionControlNetImg2ImgGenerator,
     "controlnet-inpaint": StableDiffusionControlNetInpaintGenerator,
+    "controlnet-sdxl": StableDiffusionXLImageGenerator,
+    "controlnet-t2i_adapter": StableDiffusionT2iAdapterGenerator,
 }
 
 
 def diffusion_pipeline(
-    task_id: str, stable_model_id: str = None, controlnet_model_id: str = None, scheduler_name: str = None
+    task_id: str,
+    stable_model_id: str = "runwayml/stable-diffusion-v1-5",
+    controlnet_model_id: Optional[str] = "lllyasviel/control_v11p_sd15_canny",
+    vae_model_id: Optional[str] = "madebyollin/sdxl-vae-fp16-fix",
+    adapter_model_id: Optional[str] = "TencentARC/t2iadapter_canny_sd15v2",
+    scheduler_name: str = "DDIM",
 ) -> BaseDiffusionModel:
     """
     Create and return an instance of the specified diffusion model based on the task ID.
@@ -40,7 +49,11 @@ def diffusion_pipeline(
         raise ValueError(f"Unsupported task ID: {task_id}")
 
     model_instance = DiffusionModelClass(
-        stable_model_id=stable_model_id, controlnet_model_id=controlnet_model_id, scheduler_name=scheduler_name
+        stable_model_id=stable_model_id,
+        controlnet_model_id=controlnet_model_id,
+        vae_model_id=vae_model_id,
+        adapter_model_id=adapter_model_id,
+        scheduler_name=scheduler_name,
     )
 
     return model_instance

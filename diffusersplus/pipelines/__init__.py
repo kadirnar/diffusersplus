@@ -2,6 +2,8 @@ from .base import BaseDiffusionModel
 from .controlnet import StableDiffusionControlNetGenerator
 from .controlnet_img2img import StableDiffusionControlNetImg2ImgGenerator
 from .controlnet_inpaint import StableDiffusionControlNetInpaintGenerator
+from .controlnet_sdxl import StableDiffusionXLImageGenerator
+from .controlnet_t2i_adapter import StableDiffusionT2iAdapterGenerator
 from .stable_img2img import StableDiffusionImg2ImgGenerator
 from .stable_txt2img import StableDiffusionText2ImgGenerator
 from .stable_upscale import StableDiffusionUpscaleGenerator
